@@ -34,16 +34,16 @@ DevOps Life Cycle Stages
 * Continuous Delivery/Deployment
 * Continuous Monitoring
 
-Continuous Integration (CI)
+## Continuous Integration (CI)
 Practice of merging all developers' working copies to a shared mainline several times a day.
 * Development
 * Testing
 * Integration
 
-Continuous Delivery (CDE)
+## Continuous Delivery (CDE)
 Where teams produce software in short cycles, ensuring that the software can be reliably released at any time and, when releasing the software, doing so manually.
 
-Continuous Deployment (CD)
+## Continuous Deployment (CD)
 It's automated. Difference between CDE and CD.
 
 Pipeline phases
