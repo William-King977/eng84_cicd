@@ -15,7 +15,7 @@ describe('Homepage', function() {
         done();
       });
   });
-  it('should contain the word Sparta at / GET', function(done) {
+  it('should contain the word at / GET', function(done) {
     chai.request(server)
       .get('/')
       .end(function(err, res){
