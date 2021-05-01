@@ -24,8 +24,9 @@
 * DevOps came to help modern SDLC - Agile
   * Collaboration
   * Automation
-* DevOps Lifecycle
-  **INSERT HERE**
+* DevOps Lifecycle:
+  ![image](https://user-images.githubusercontent.com/44005332/116782806-2e59b200-aa83-11eb-8df2-a8a952259b07.png)
+
 
 ## CI/CD
 ### Continuous Integration (CI)
@@ -38,7 +39,7 @@ Practice of merging all developers' working copies to a shared mainline several 
 Where teams produce software in short cycles, ensuring that the software can be reliably released at any time and, when releasing the software, doing so **manually**.
 
 ### Continuous Deployment (CD)
-Same as CDE, but deployment is automated.
+Same as CDE, but deployment is **automated**.
 
 ### Pipeline phases
 1. Commit 
