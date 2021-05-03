@@ -169,7 +169,6 @@ We will deploy our application on an EC2 instance.
 7. Review and Launch
 8. Select the existing DevOpsStudent key:pair option for SSH
 9. Transfer the app's folders using `scp -i ~/.ssh/DevOpsStudent.pem -r app_location ubuntu@app_ec2_public_ip:~/app/` in the directory before the app
-10. SSH inside the instance and run the app's provision file
 11. Ensure the public NACL allows SSH (22) with source `jenkins_server_ip/32`
 12. If the Jenkins server updates, the GitHub webhook, security group and NACL need to be modified
 
@@ -203,17 +202,25 @@ We will deploy our application on an EC2 instance.
 
    ssh -A -o "StrictHostKeyChecking=no" ubuntu@deploy_public_ip <<EOF
 
+       # 'kill' all running instances of node.js
        killall npm
-
-       cd app/app
+    
+       # run provisions file for dependencies
+       cd /home/ubuntu/app/environment/app
+       chmod +x provision.sh
+       ./provision.sh
+    
+       # Install npm for remaining dependencies
+       cd /home/ubuntu/app/app
        sudo npm install
        node seeds/seed.js
      
+       # Run the app
        node app.js &
 
    EOF
    ```
-3. NOTE: the `deploy_public_ip` will need to be changed each time you re-run the deployment instance 
+3. NOTE: the `deploy_public_ip` will need to be changed each time you re-run the deployment EC2 instance 
 
 ## Step 8: Trigger the Builds!
 1. Switch to the `dev` branch
