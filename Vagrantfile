@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
     app.vm.network "private_network", ip: "192.168.10.100"
     app.hostsupdater.aliases = ["development.local"]
     app.vm.synced_folder "app", "/home/ubuntu/app/app"
-    app.vm.synced_folder "environment/app", "/home/ubuntu/app/environment"
+    app.vm.synced_folder "environment/app", "/home/ubuntu/app/environment/app"
     app.vm.provision "shell", path: "environment/app/provision.sh", privileged: false
     app.vm.provision "shell", inline: set_env({ DB_HOST: "mongodb://192.168.10.150:27017/posts" }), privileged: false
   end
@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
     db.vm.box = "ubuntu/xenial64"
     db.vm.network "private_network", ip: "192.168.10.150"
     # db.hostsupdater.aliases = ["database.local"] # This line throws a giant error
-    db.vm.synced_folder "environment/db", "/home/ubuntu/environment"
+    db.vm.synced_folder "environment/db", "/home/ubuntu/environment/db"
     db.vm.provision "shell", path: "environment/db/provision.sh", privileged: false
   end
 end

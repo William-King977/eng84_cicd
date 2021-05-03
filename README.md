@@ -83,7 +83,7 @@ Same as CDE, but deployment is **automated**.
 4. Click **Ok**
 5. Create a job for CI, merging and deployment
 
-## Step 4: Continuous Integration (CI) Build
+## Step 4: Continuous Integration (CI) Job
 ### General
 1. Click **Discard old builds** and keep the max number of build to 2
 2. Click **GitHub project** and add the HTTP URL of the repository
@@ -122,7 +122,7 @@ Same as CDE, but deployment is **automated**.
 2. Insert the project name for the merge job
 3. Ensure **Trigger only if build is stable** is selected
 
-## Step 5: Merge Build
+## Step 5: Merge Job
 ### General
 1. Click **Discard old builds** and keep the max number of build to 2
 2. Click **GitHub project** and add the HTTP URL of the repository
@@ -167,11 +167,12 @@ We will deploy our application on an EC2 instance.
    * HTTP (80) with source `Anywhere` - allow access to the app
 7. Review and Launch
 8. Select the existing DevOpsStudent key:pair option for SSH
-9. Transfer the app's provision file and run it inside the instance (for dependencies)
-10. Ensure the public NACL allows SSH (22) with source `jenkins_server_ip/32`
-11. If the Jenkins server updates, the GitHub webhook, security group and NACL need to be modified
+9. Transfer the app's folders using `scp -i ~/.ssh/DevOpsStudent.pem -r app_location ubuntu@app_ec2_public_ip:~/app/` in the directory before the app
+10. SSH inside the instance and run the app's provision file
+11. Ensure the public NACL allows SSH (22) with source `jenkins_server_ip/32`
+12. If the Jenkins server updates, the GitHub webhook, security group and NACL need to be modified
 
-## Step 7: Continuous Deployment Build
+## Step 7: Continuous Deployment Job
 ### General
 1. Click **Discard old builds** and keep the max number of build to 2
 2. Click **GitHub project** and add the HTTP URL of the repository
@@ -196,10 +197,10 @@ We will deploy our application on an EC2 instance.
    git clone -b main https://github.com/William-King977/eng84_cicd_jenkins.git
    cd eng84_cicd_jenkins
 
-   rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@34.245.32.29:/home/ubuntu/app
-   rsync -avz -e "ssh -o StrictHostKeyChecking=no" environment ubuntu@34.245.32.29:/home/ubuntu/app
+   rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@deploy_public_ip:/home/ubuntu/app
+   rsync -avz -e "ssh -o StrictHostKeyChecking=no" environment ubuntu@deploy_public_ip:/home/ubuntu/app
 
-   ssh -A -o "StrictHostKeyChecking=no" ubuntu@34.245.32.29 <<EOF
+   ssh -A -o "StrictHostKeyChecking=no" ubuntu@deploy_public_ip <<EOF
 
        killall npm
 
