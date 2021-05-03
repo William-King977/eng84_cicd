@@ -82,7 +82,7 @@ Same as CDE, but deployment is **automated**.
 2. Check `GitHub project` and add the HTTP URL of the repository
 
 ### Office 365 Connector section
-* Check `Restrict where this project can be run`, then set it as `sparta-...`
+* Check `Restrict where this project can be run`, then set it as `sparta-ubuntu-node`
 
 ## Step 4: Merge Build
 
