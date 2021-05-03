@@ -168,9 +168,8 @@ We will deploy our application on an EC2 instance.
    * Custom TCP (3000) with source `0.0.0.0/0` - allow access to port 3000
 7. Review and Launch
 8. Select the existing DevOpsStudent key:pair option for SSH
-9. Transfer the app's folders using `scp -i ~/.ssh/DevOpsStudent.pem -r app_location ubuntu@app_ec2_public_ip:~/app/` in the directory before the app
-11. Ensure the public NACL allows SSH (22) with source `jenkins_server_ip/32`
-12. If the Jenkins server updates, the GitHub webhook, security group and NACL need to be modified
+9. Ensure the public NACL allows SSH (22) with source `jenkins_server_ip/32`
+10. If the Jenkins server updates/reboots, the GitHub webhook, security group and NACL need to be modified
 
 ## Step 7: Continuous Deployment Job
 ### General
