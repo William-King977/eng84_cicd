@@ -84,33 +84,33 @@ Same as CDE, but deployment is **automated**.
 5. Create a job for CI, merging and deployment
 
 ## Step 4: Continuous Integration (CI) Build
-### General section
-1. Check **Discard old builds** and keep the max number of build to 2
-2. Check **GitHub project** and add the HTTP URL of the repository
+### General
+1. Click **Discard old builds** and keep the max number of build to 2
+2. Click **GitHub project** and add the HTTP URL of the repository
 
-### Office 365 Connector section
-* Check **Restrict where this project can be run**, then set it as `sparta-ubuntu-node`
+### Office 365 Connector
+* Click **Restrict where this project can be run**, then set it as `sparta-ubuntu-node`
 
 ### Source Code Management
 1. Select **Git**
 2. In **Repositories**:
    * **Repository URL:** insert the SSH URL from GitHub
    * **Credentials:** 
-     * Next to Credentials, select **Add** > **Jenkins** 
+     * Next to **Credentials**, click **Add** > **Jenkins** 
      * Select **Kind** as **SSH Username with private key**
      * Set a suitable description and enter the private key directly. The private key is in your `~/.ssh` directory, named `key_name` without `.pub`. Ensure that the begin and end text of the key is included.
      * With the *credential* added, select the one you created
    * **Branches to build:** set to `*/dev` (dev branch)
 
 ### Build Triggers
-* Select **GitHub hook trigger for GITScm polling**
+* Click **GitHub hook trigger for GITScm polling**
 
 ### Build Environment
-* Select **Provide Node & npm bin/ folder to PATH**
+* Click **Provide Node & npm bin/ folder to PATH**
 
 ### Build
-* Select **Add build step** > **Execute Shell**
-* In command, enter the following code:
+1. Click **Add build step** > **Execute Shell**
+2. In command, enter the following code:
   ```
   cd app
   npm install
@@ -118,17 +118,17 @@ Same as CDE, but deployment is **automated**.
   ```
 
 ### Post-build Actions
-* Select **Add post-build action** > **Build other projects**
-* Insert the project name for the merge job
-* Ensure **Trigger only if build is stable** is selected
+1. Select **Add post-build action** > **Build other projects**
+2. Insert the project name for the merge job
+3. Ensure **Trigger only if build is stable** is selected
 
 ## Step 5: Merge Build
-### General section
-1. Check **Discard old builds** and keep the max number of build to 2
-2. Check **GitHub project** and add the HTTP URL of the repository
+### General
+1. Click **Discard old builds** and keep the max number of build to 2
+2. Click **GitHub project** and add the HTTP URL of the repository
 
-### Office 365 Connector section
-* Check **Restrict where this project can be run**, then set it as `sparta-ubuntu-node`
+### Office 365 Connector
+* Click **Restrict where this project can be run**, then set it as `sparta-ubuntu-node`
 
 ### Source Code Management
 1. Select **Git**
@@ -141,14 +141,15 @@ Same as CDE, but deployment is **automated**.
 * Select **Provide Node & npm bin/ folder to PATH**
 
 ### Post-build Actions
-* First, select **Add post-build action** > **Git Publisher**
-* Check **Push Only If Build Succeeds**
-* In **Branches**:
-  * **Branch to push:** main
-  * **Target remote name:** origin
-* Next, select **Add post-build action** > **Build other projects**
-* Insert the project name for the deploy job
-* Ensure **Trigger only if build is stable** is selected
+1. First, select **Add post-build action** > **Git Publisher**
+2. Click **Push Only If Build Succeeds**
+3. In **Branches**:
+   * **Branch to push:** main
+   * **Target remote name:** origin
+4. Next, select **Add post-build action** > **Build other projects**
+5. Insert the project name for the deploy job
+6. Ensure **Trigger only if build is stable** is selected
+7. Ensure the **Build other projects** block is below the **Git Publisher** block
 
 ## Step 6: EC2 Instance for Deployment
 We will deploy our application on an EC2 instance.
@@ -171,12 +172,12 @@ We will deploy our application on an EC2 instance.
 11. If the Jenkins server updates, the GitHub webhook, security group and NACL need to be modified
 
 ## Step 7: Continuous Deployment Build
-### General section
-1. Check **Discard old builds** and keep the max number of build to 2
-2. Check **GitHub project** and add the HTTP URL of the repository
+### General
+1. Click **Discard old builds** and keep the max number of build to 2
+2. Click **GitHub project** and add the HTTP URL of the repository
 
-### Office 365 Connector section
-* Check **Restrict where this project can be run**, then set it as `sparta-ubuntu-node`
+### Office 365 Connector
+* Click **Restrict where this project can be run**, then set it as `sparta-ubuntu-node`
 
 ### Source Code Management
 * Keep it at **None**
@@ -184,32 +185,32 @@ We will deploy our application on an EC2 instance.
 ### Build Environment
 1. Select **Provide Node & npm bin/ folder to PATH**
 2. Select **SSH Agent**:
-  * Select **Specific credentials**
-  * Select the SSH key for the EC2 instance (DevOpsStudent in this case)
+   * Select **Specific credentials**
+   * Select the SSH key for the EC2 instance (DevOpsStudent in this case)
 
 ### Build
 1. Select **Add build step** > **Execute Shell**
 2. In command, insert the following code:
-  ```
-  rm -rf eng84_cicd_jenkins*
-  git clone -b main https://github.com/William-King977/eng84_cicd_jenkins.git
-  cd eng84_cicd_jenkins
+   ```
+   rm -rf eng84_cicd_jenkins*
+   git clone -b main https://github.com/William-King977/eng84_cicd_jenkins.git
+   cd eng84_cicd_jenkins
 
-  rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@34.245.32.29:/home/ubuntu/app
-  rsync -avz -e "ssh -o StrictHostKeyChecking=no" environment ubuntu@34.245.32.29:/home/ubuntu/app
+   rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@34.245.32.29:/home/ubuntu/app
+   rsync -avz -e "ssh -o StrictHostKeyChecking=no" environment ubuntu@34.245.32.29:/home/ubuntu/app
 
-  ssh -A -o "StrictHostKeyChecking=no" ubuntu@34.245.32.29 <<EOF
+   ssh -A -o "StrictHostKeyChecking=no" ubuntu@34.245.32.29 <<EOF
 
-      killall npm
+       killall npm
 
-      cd app/app
-      sudo npm install
-      node seeds/seed.js
-    
-      node app.js
+       cd app/app
+       sudo npm install
+       node seeds/seed.js
+     
+       node app.js
 
-  EOF
-  ```
+   EOF
+   ```
 
 ## Step 8: Trigger the Builds!
 1. Switch to the `dev` branch
