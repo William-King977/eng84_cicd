@@ -209,7 +209,7 @@ We will deploy our application on an EC2 instance.
        sudo npm install
        node seeds/seed.js
      
-       node app.js
+       node app.js &
 
    EOF
    ```
