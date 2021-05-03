@@ -165,6 +165,7 @@ We will deploy our application on an EC2 instance.
    * SSH (22) with source `My IP` - allows you to SSH
    * SSH (22) with source `jenkins_server_ip/32` - allows Jenkins server to SSH
    * HTTP (80) with source `Anywhere` - allow access to the app
+   * Custom TCP (3000) with source `0.0.0.0/0` - allow access to port 3000
 7. Review and Launch
 8. Select the existing DevOpsStudent key:pair option for SSH
 9. Transfer the app's folders using `scp -i ~/.ssh/DevOpsStudent.pem -r app_location ubuntu@app_ec2_public_ip:~/app/` in the directory before the app
@@ -212,6 +213,7 @@ We will deploy our application on an EC2 instance.
 
    EOF
    ```
+3. NOTE: the `deploy_public_ip` will need to be changed each time you re-run the deployment instance 
 
 ## Step 8: Trigger the Builds!
 1. Switch to the `dev` branch
@@ -221,6 +223,7 @@ We will deploy our application on an EC2 instance.
 5. A merge build will only trigger if the tests in the CI build pass
 6. After the merge build, the `dev` branch will merge with your `main` branch on GitHub
 7. If the deployment build succeeds, the app will be running on its public IP!
+8. NOTE: the image will only display if you access port 3000
 
 ## Bonus Step: Running in Vagrant
 1. Run both the app and database using `vagrant up app` and `vagrant up db` respectively on separate terminals
