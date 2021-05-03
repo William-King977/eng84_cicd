@@ -76,17 +76,81 @@ Same as CDE, but deployment is **automated**.
 5. For the events to trigger, select **Send me everything**
 6. Ensure **Active** is checked and click **Add webhook**
 
-## Step 3: Continuous Integration Build
+## Step 3: Creating Jenkins Jobs
+1. On the Jenkins Dashboard, click on **New Item** (side tabs)
+2. Enter a suitable name for the job
+3. Select **Freestyle project**
+4. Click **Ok**
+5. Create a job for CI, merging and deployment
+
+## Step 4: Continuous Integration (CI) Build
 ### General section
-1. Check `Discard old builds` and keep the max number of build to 2
-2. Check `GitHub project` and add the HTTP URL of the repository
+1. Check **Discard old builds** and keep the max number of build to 2
+2. Check **GitHub project** and add the HTTP URL of the repository
 
 ### Office 365 Connector section
-* Check `Restrict where this project can be run`, then set it as `sparta-ubuntu-node`
+* Check **Restrict where this project can be run**, then set it as `sparta-ubuntu-node`
 
-## Step 4: Merge Build
+### Source Code Management
+1. Select **Git**
+2. In **Repositories**:
+   * **Repository URL:** insert the SSH URL from GitHub
+   * **Credentials:** 
+     * Next to Credentials, select **Add** > **Jenkins** 
+     * Select **Kind** as **SSH Username with private key**
+     * Set a suitable description and enter the private key directly. The private key is in your `~/.ssh` directory, named `key_name` without `.pub`. Ensure that the begin and end text of the key is included.
+     * With the *credential* added, select the one you created
+   * **Branches to build:** set to `*/dev` (dev branch)
 
-## Step 5: EC2 Instance for Deployment
+### Build Triggers
+* Select **GitHub hook trigger for GITScm polling**
+
+### Build Environment
+* Select **Provide Node & npm bin/ folder to PATH**
+
+### Build
+* Select **Add build step** > **Execute Shell**
+* In command, enter the following code:
+  ```
+  cd app
+  npm install
+  npm test
+  ```
+
+### Post-build Actions
+* Select **Add post-build action** > **Build other projects**
+* Insert the project name for the merge job
+* Ensure **Trigger only if build is stable** is selected
+
+## Step 5: Merge Build
+### General section
+1. Check **Discard old builds** and keep the max number of build to 2
+2. Check **GitHub project** and add the HTTP URL of the repository
+
+### Office 365 Connector section
+* Check **Restrict where this project can be run**, then set it as `sparta-ubuntu-node`
+
+### Source Code Management
+1. Select **Git**
+2. In **Repositories:**
+   * **Repository URL:** insert the SSH URL
+   * **Credentials:** select the credential you created earlier
+   * **Branches to build:** set to `*/dev` (dev branch)
+
+### Build Environment
+* Select **Provide Node & npm bin/ folder to PATH**
+
+### Post-build Actions
+* First, select **Add post-build action** > **Git Publisher**
+* Check **Push Only If Build Succeeds**
+* In **Branches**:
+  * **Branch to push:** main
+  * **Target remote name:** origin
+* Next, select **Add post-build action** > **Build other projects**
+* Insert the project name for the deploy job
+* Ensure **Trigger only if build is stable** is selected
+
+## Step 6: EC2 Instance for Deployment
 We will deploy our application on an EC2 instance.
 1. Create a new EC2 instance
 2. Choose `Ubuntu Server 16.04 LTS (HVM), SSD Volume Type` as the AMI
@@ -102,9 +166,59 @@ We will deploy our application on an EC2 instance.
    * HTTP (80) with source `Anywhere` - allow access to the app
 7. Review and Launch
 8. Select the existing DevOpsStudent key:pair option for SSH
-9. Ensure the public NACL allows SSH (22) with source `jenkins_server_ip/32`
+9. Transfer the app's provision file and run it inside the instance (for dependencies)
+10. Ensure the public NACL allows SSH (22) with source `jenkins_server_ip/32`
+11. If the Jenkins server updates, the GitHub webhook, security group and NACL need to be modified
 
-## Step 6: Continuous Deployment Build
+## Step 7: Continuous Deployment Build
+### General section
+1. Check **Discard old builds** and keep the max number of build to 2
+2. Check **GitHub project** and add the HTTP URL of the repository
+
+### Office 365 Connector section
+* Check **Restrict where this project can be run**, then set it as `sparta-ubuntu-node`
+
+### Source Code Management
+* Keep it at **None**
+
+### Build Environment
+1. Select **Provide Node & npm bin/ folder to PATH**
+2. Select **SSH Agent**:
+  * Select **Specific credentials**
+  * Select the SSH key for the EC2 instance (DevOpsStudent in this case)
+
+### Build
+1. Select **Add build step** > **Execute Shell**
+2. In command, insert the following code:
+  ```
+  rm -rf eng84_cicd_jenkins*
+  git clone -b main https://github.com/William-King977/eng84_cicd_jenkins.git
+  cd eng84_cicd_jenkins
+
+  rsync -avz -e "ssh -o StrictHostKeyChecking=no" app ubuntu@34.245.32.29:/home/ubuntu/app
+  rsync -avz -e "ssh -o StrictHostKeyChecking=no" environment ubuntu@34.245.32.29:/home/ubuntu/app
+
+  ssh -A -o "StrictHostKeyChecking=no" ubuntu@34.245.32.29 <<EOF
+
+      killall npm
+
+      cd app/app
+      sudo npm install
+      node seeds/seed.js
+    
+      node app.js
+
+  EOF
+  ```
+
+## Step 8: Trigger the Builds!
+1. Switch to the `dev` branch
+2. Make any change to your repository
+3. Add, commit and push your changes to the `dev` branch
+4. A CI build will trigger
+5. A merge build will only trigger if the tests in the CI build pass
+6. After the merge build, the `dev` branch will merge with your `main` branch on GitHub
+7. If the deployment build succeeds, the app will be running on its public IP!
 
 ## Bonus Step: Running in Vagrant
 1. Run both the app and database using `vagrant up app` and `vagrant up db` respectively on separate terminals
