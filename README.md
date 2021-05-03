@@ -236,6 +236,8 @@ We will deploy our application on an EC2 instance.
 1. Run both the app and database using `vagrant up app` and `vagrant up db` respectively on separate terminals
 2. SSH into the app using `vagrant ssh app`
 3. Navigate to the `/home/ubuntu/` directory (you are placed in `/home/vagrant/` by default)
-4. Run `node seed.js` in the `seeds` directory to populate the database
-5. On a web browser, enter `development.local` to show that the app is *working*
-6. The posts page will open with `development.local:3000/posts`
+4. Go to the `/home/ubuntu/app/app` directory and run `node seeds/seed.js` to populate the database
+5. Run `npm install` for any remaining dependencies
+6. Execute `node app.js` to run the app
+7. On a web browser, enter `development.local:3000` to show that the app is *working*
+8. The posts page will open with `development.local:3000/posts`
