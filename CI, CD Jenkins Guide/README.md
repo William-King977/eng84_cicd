@@ -14,9 +14,10 @@
 1. On your repository, click on **Setting**
 2. On the side tabs, click on **Webhooks** > **Add webhook**
 3. Enter the Payload URL as `http://jenkins_ip:8080/github-webhook/`
-4. For the Content type, select `apllication/json`
+4. For the Content type, select `application/json`
 5. For the events to trigger, select **Send me everything**
 6. Ensure **Active** is checked and click **Add webhook**
+7. NOTE: if the Jenkins server updates/reboots, the Payload URL needs to be updated
 
 ## Step 3: Creating Jenkins Jobs
 1. On the Jenkins Dashboard, click on **New Item** (side tabs)
@@ -111,7 +112,7 @@ We will deploy our application on an EC2 instance.
 7. Review and Launch
 8. Select the existing DevOpsStudent key:pair option for SSH
 9. Ensure the public NACL allows SSH (22) with source `jenkins_server_ip/32`
-10. If the Jenkins server updates/reboots, the GitHub webhook, security group and NACL need to be modified
+10. NOTE: if the Jenkins server updates/reboots, the security group and NACL need to be modified
 
 ## Step 7: Continuous Deployment Job
 ### General
